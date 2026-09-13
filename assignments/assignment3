@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="../style.css" />
+
+    <title>Assignment 3</title>
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <nav>
+      <a href="../index.html">Assignment 2</a>
+      <a href="assignment3.html">Assignment 3</a>
+    </nav>
+
+    <!-- Main content -->
+    <main>
+      <h1>Assignment 3</h1>
+
+      <section>
+        <h2>
+          1. Why are so many companies using cloud-based email and calendar
+          services?
+        </h2>
+
+        <p>
+          Many companies are using cloud-based services because they can save
+          money and reduce the workload for employees, which is especially
+          useful for smaller companies. Companies do not have to buy and manage
+          their own servers where the email system would run. Cloud service
+          providers such as Microsoft 365 and Google Workspace operate the
+          servers and take care of maintenance and updates. The company only
+          needs to pay for the subscription. Cloud-based services also make it
+          easier for a company to grow. If the company gets more employees, it
+          does not need to buy additional hardware for its email system.
+          Instead, it can simply add more user accounts to the service. Another
+          advantage is that employees can access their email and calendars from
+          different devices and locations, which is useful when people work
+          remotely or travel for work.
+        </p>
+      </section>
+
+      <section>
+        <h2>
+          2. What would a mid-size company store in Amazon Glacier? What would
+          it not store?
+        </h2>
+
+        <p>
+          A mid-size company could use Amazon Glacier to store old server
+          backups, years-old database backups and other important documents that
+          the company still needs to keep but does not use on a daily basis. For
+          example, a company could store old financial records or backups from
+          several years ago in Glacier. The reason for using Glacier for this
+          type of data is that it is designed for long-term storage and
+          archiving. The company can keep important data without using more
+          expensive storage that is designed for frequently accessed files.
+          However, a company would not normally store files that employees need
+          to access every day in Glacier. This is because retrieving archived
+          data can be slower and can also have additional costs.
+        </p>
+      </section>
+
+      <section>
+        <h2>
+          3. When should a company maintain its own web server, and when should
+          it use SaaS/PaaS/IaaS?
+        </h2>
+
+        <p>
+          A company should consider using its own servers if it needs
+          specialised hardware, complete control over its infrastructure or has
+          special security requirements. It can also make sense if the company
+          already has the necessary hardware and IT staff to maintain the
+          servers. Cloud services can be a better choice for smaller companies
+          because they may not have enough money or IT staff to build and
+          maintain their own server infrastructure. Cloud services are also
+          useful when the company's applications do not require specialised
+          hardware or unusual infrastructure. For example, a small company that
+          needs to host a normal website may find it easier to use a cloud
+          provider instead of buying and maintaining a physical server. In my
+          opinion, the choice depends on what the company needs. Running your
+          own servers gives you more control, but it also means more work and
+          responsibility. Cloud services usually require less maintenance and
+          can be easier to scale as the company grows.
+        </p>
+      </section>
+
+      <!-- Question 4 -->
+      <section>
+        <h2>
+          4.Describe reasons, why many IoT devices (internet connected home
+          appliances, Smart-TVs and such) are using Google's 8.8.8.8 or some
+          other public DNS resolvers?
+        </h2>
+
+        <p>
+          The manufacturers don't know what type of network the device will be
+          connected to, so instead of relying completely on the local network's
+          DNS configuration, the manufacturer can configure a known public DNS
+          resolver such as Google's 8.8.8.8. This makes it easier for the device
+          to work on different networks and with different Internet service
+          providers. It also means that the user does not have to manually
+          configure the DNS settings for the device. This can be useful for
+          devices such as Smart-TVs because they need to connect to online
+          services such as Netflix, software update servers and the
+          manufacturer's own services. Another reason for using public DNS is
+          that large companies such as Google have DNS servers that are designed
+          to be reliable and available around the world. However, there are also
+          some disadvantages. When a device uses a public DNS resolver, the DNS
+          provider can see the DNS requests made by the device, which can create
+          privacy concerns. It can also bypass some DNS-based filtering that has
+          been configured on the home network.
+        </p>
+      </section>
+      <section>
+        <h2>Documentation</h2>
+        <p>
+          As you can see in the screenshots below I created and subpage called
+          assigment 3 on my original rahti webpage where I put my answers to the
+          4 questions that I picked and the screenshot's are put on the website
+          using allas.
+        </p>
+        <p>
+          Link to github repository:
+          <a href="https://github.com/TeresasDesign/cloudw2.git">Here</a>
+        </p>
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/code.png" />
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/allas.png" />
+      </section>
+    </main>
+
+    <footer>
+      <p>Cloud Computing Assignment 3</p>
+    </footer>
+  </body>
+</html>

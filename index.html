@@ -3,84 +3,137 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <title>Assignment 2</title>
   </head>
+
   <body>
-    <h1>Assignment 2</h1>
-    <p>Hi this is my html document created for this 2. assignment.</p>
-    <section>
-      <h2>1. What is serverless architecture?</h2>
-      <p>
-        Serverless architecture is a cloud architecture in which the cloud
-        provider manages the servers and much of the underlying infrastructure
-        for the developer. The application still runs on servers, but the
-        developer does not normally provision, patch, or scale those servers
-        directly. For example, with AWS Lambda, a developer uploads a function
-        and AWS takes care of the infrastructure, capacity, scaling and
-        patching. Lambda functions can be triggered by events such as an HTTP
-        request, a file uploaded to storage, or a message in a queue.
-      </p>
-      <br />
-      <h2>2. Compare application containers to microservices.</h2>
-      <p>
-        An application container is a packaging and isolation technology, while
-        a microservice is an architectural approach. A container packages an
-        application together with its libraries and dependencies so that it can
-        run consistently in different environments. Docker containers, for
-        example, use operating-system isolation mechanisms rather than
-        containing a complete separate operating system for every application.
-        Microservices describe how an application is divided into relatively
-        small, independently deployable services. Each service normally has a
-        specific responsibility, such as user authentication, payments, or
-        product search. A microservice can be packaged in a container, but
-        containers and microservices are not the same thing. One container can
-        contain a monolithic application, and a microservice can also be
-        deployed without Docker.
-      </p>
-      <br />
-      <h2>3. What is Kubernetes and what alternatives are there?</h2>
-      <p>
-        Kubernetes is an open-source platform for managing containerized
-        workloads and services. It provides declarative configuration and
-        automation for tasks such as deploying applications, scaling them,
-        service discovery and replacing failed containers. Kubernetes is
-        particularly useful when an organization has many containers and needs a
-        systematic way to operate them in production. For example, suppose an
-        application normally needs five instances of a web service. Kubernetes
-        can maintain that desired state and create replacement containers if one
-        fails. It can also scale workloads when configured to do so. The
-        Kubernetes documentation describes it as a portable and extensible
-        platform for managing containerized workloads and services. Kubernetes
-        is not the only option. Depending on the project, alternatives include
-        Docker Swarm, Nomad by HashiCorp, and managed container platforms such
-        as Amazon ECS. A small application may not need a full Kubernetes
-        cluster at all; a simpler container service can be easier to operate.
-        Therefore, the best choice depends on scale, team skills, cloud
-        provider, portability requirements and operational complexity.
-      </p>
-      <h2>
-        4. What are some benefits of Infrastructure as Code (IaC) for modern
-        software development?
-      </h2>
-      <p>
-        Infrastructure as Code means defining infrastructure in configuration
-        files instead of creating and changing resources manually through a
-        graphical cloud console. Tools such as Terraform allow developers and
-        operations teams to describe the desired infrastructure and then create
-        or modify resources from those definitions. One important benefit is
-        repeatability. If a development environment is described as code, the
-        same configuration can be used to create a similar testing or production
-        environment. IaC also supports version control, so a team can see who
-        changed the infrastructure, review the change and return to an earlier
-        version when necessary. IaC also improves automation and consistency.
-        Infrastructure changes can be included in CI/CD pipelines and tested
-        before deployment. This reduces manual configuration mistakes and helps
-        prevent differences between environments, often called configuration
-        drift. Another benefit is that the IaC files become a form of living
-        documentation: instead of relying only on a document that may become
-        outdated, the configuration describes what the infrastructure is
-        supposed to contain.
-      </p>
-    </section>
+    <!-- Navigation -->
+    <nav>
+      <a href="index.html">Assignment 2</a>
+      <a href="assignments/assignment3.html">Assignment 3</a>
+    </nav>
+
+    <!-- Main content -->
+    <main>
+      <h1>Assignment 2</h1>
+
+      <p>Hi, this is my HTML document created for this 2nd assignment.</p>
+
+      <section>
+        <h2>1. What is serverless architecture?</h2>
+
+        <p>
+          Serverless architecture is a cloud architecture in which the cloud
+          provider manages the servers and much of the underlying infrastructure
+          for the developer. The application still runs on servers, but the
+          developer does not normally provision, patch, or scale those servers
+          directly. For example, with AWS Lambda, a developer uploads a function
+          and AWS takes care of the infrastructure, capacity, scaling and
+          patching. Lambda functions can be triggered by events such as an HTTP
+          request, a file uploaded to storage, or a message in a queue.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. Compare application containers to microservices.</h2>
+
+        <p>
+          An application container is a packaging and isolation technology,
+          while a microservice is an architectural approach. A container
+          packages an application together with its libraries and dependencies
+          so that it can run consistently in different environments. Docker
+          containers, for example, use operating-system isolation mechanisms
+          rather than containing a complete separate operating system for every
+          application.
+        </p>
+
+        <p>
+          Microservices describe how an application is divided into relatively
+          small, independently deployable services. Each service normally has a
+          specific responsibility, such as user authentication, payments, or
+          product search. A microservice can be packaged in a container, but
+          containers and microservices are not the same thing. One container can
+          contain a monolithic application, and a microservice can also be
+          deployed without Docker.
+        </p>
+      </section>
+
+      <section>
+        <h2>3. What is Kubernetes and what alternatives are there?</h2>
+
+        <p>
+          Kubernetes is an open-source platform for managing containerized
+          workloads and services. It provides declarative configuration and
+          automation for tasks such as deploying applications, scaling them,
+          service discovery and replacing failed containers.
+        </p>
+
+        <p>
+          Kubernetes is particularly useful when an organization has many
+          containers and needs a systematic way to operate them in production.
+          For example, suppose an application normally needs five instances of a
+          web service. Kubernetes can maintain that desired state and create
+          replacement containers if one fails. It can also scale workloads when
+          configured to do so.
+        </p>
+
+        <p>
+          The Kubernetes documentation describes it as a portable and extensible
+          platform for managing containerized workloads and services. Kubernetes
+          is not the only option. Depending on the project, alternatives include
+          Docker Swarm, Nomad by HashiCorp, and managed container platforms such
+          as Amazon ECS.
+        </p>
+
+        <p>
+          A small application may not need a full Kubernetes cluster at all; a
+          simpler container service can be easier to operate. Therefore, the
+          best choice depends on scale, team skills, cloud provider, portability
+          requirements and operational complexity.
+        </p>
+      </section>
+
+      <section>
+        <h2>
+          4. What are some benefits of Infrastructure as Code (IaC) for modern
+          software development?
+        </h2>
+
+        <p>
+          Infrastructure as Code means defining infrastructure in configuration
+          files instead of creating and changing resources manually through a
+          graphical cloud console. Tools such as Terraform allow developers and
+          operations teams to describe the desired infrastructure and then
+          create or modify resources from those definitions.
+        </p>
+
+        <p>
+          One important benefit is repeatability. If a development environment
+          is described as code, the same configuration can be used to create a
+          similar testing or production environment. IaC also supports version
+          control, so a team can see who changed the infrastructure, review the
+          change and return to an earlier version when necessary.
+        </p>
+
+        <p>
+          IaC also improves automation and consistency. Infrastructure changes
+          can be included in CI/CD pipelines and tested before deployment. This
+          reduces manual configuration mistakes and helps prevent differences
+          between environments, often called configuration drift.
+        </p>
+
+        <p>
+          Another benefit is that the IaC files become a form of living
+          documentation: instead of relying only on a document that may become
+          outdated, the configuration describes what the infrastructure is
+          supposed to contain.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <p>Cloud Computing Assignment 2</p>
+    </footer>
   </body>
 </html>

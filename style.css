@@ -1,0 +1,123 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Navigation bar */
+nav {
+  background-color: #222;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 16px 22px;
+  display: block;
+  transition: background-color 0.2s;
+}
+
+nav a:hover {
+  background-color: #444;
+}
+
+/* Main content */
+main {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* Headings */
+h1 {
+  margin-bottom: 10px;
+  font-size: 2.2rem;
+}
+
+h2 {
+  margin-top: 35px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 8px;
+}
+
+/* Content sections */
+section {
+  background-color: white;
+  padding: 25px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Images / screenshots */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 15px auto;
+  border-radius: 6px;
+}
+
+/* Links inside the page */
+main a {
+  color: #0066cc;
+}
+
+main a:hover {
+  text-decoration: underline;
+}
+
+/* Code / commands */
+code {
+  background-color: #eee;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+
+pre {
+  background-color: #222;
+  color: white;
+  padding: 15px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #666;
+}
+
+/* Mobile phones */
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  nav a {
+    padding: 12px;
+  }
+
+  main {
+    margin: 20px auto;
+  }
+
+  section {
+    padding: 18px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+}
