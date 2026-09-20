@@ -1,0 +1,15 @@
+<h1>Assignment 4</h1>
+
+<div id="msg">Loading...</div>
+
+<script>
+  fetch("/api/status")
+    .then((r) => r.json())
+    .then((d) => {
+      document.getElementById("msg").textContent =
+        `Database: ${d.database}, Visits: ${d.visits}, Time: ${d.database_time}`;
+    })
+    .catch((e) => {
+      document.getElementById("msg").textContent = "API error: " + e;
+    });
+</script>

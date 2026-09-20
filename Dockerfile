@@ -1,11 +1,7 @@
-FROM httpd:alpine
+FROM nginx:alpine
 
-COPY . /usr/local/apache2/htdocs/
-
-# Rahti runs containers as an arbitrary non-root UID by default
-# that UID can't bind to port 80, so move Apache to a non-privileged port instead.
-RUN sed -i 's/^Listen 80$/Listen 8080/' /usr/local/apache2/conf/httpd.conf && \
-    chgrp -R 0 /usr/local/apache2/logs && \
-    chmod -R g=u /usr/local/apache2/logs
+COPY index.html /usr/share/nginx/html/
+COPY style.css /usr/share/nginx/html/
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 8080
