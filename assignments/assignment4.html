@@ -242,24 +242,24 @@
         const studentNameEl = document.getElementById("student-name");
 
         try {
-          const response = await fetch("/api/status");
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+          // 1. Call /api/visit to automatically increment the counter in MySQL
+          const visitResponse = await fetch("/api/visit");
+          if (visitResponse.ok) {
+            const visitData = await visitResponse.json();
+            visitsCountEl.textContent = visitData.visits ?? "0";
           }
 
-          const data = await response.json();
-
-          dbStatusEl.textContent = data.database ?? "connected";
-          dbTimeEl.textContent = data.database_time ?? "--";
-          visitsCountEl.textContent =
-            data.visits !== undefined ? data.visits : "0";
-          studentNameEl.textContent = data.name ?? "Student";
+          // 2. Call /api/status for database time, status, and your name
+          const statusResponse = await fetch("/api/status");
+          if (statusResponse.ok) {
+            const statusData = await statusResponse.json();
+            dbStatusEl.textContent = statusData.database ?? "connected";
+            dbTimeEl.textContent = statusData.database_time ?? "--";
+            studentNameEl.textContent = statusData.name ?? "Terezka";
+          }
         } catch (error) {
           console.error("Error fetching application status:", error);
           dbStatusEl.textContent = "Disconnected";
-          dbTimeEl.textContent = "--";
-          visitsCountEl.textContent = "--";
-          studentNameEl.textContent = "--";
         }
       }
 
