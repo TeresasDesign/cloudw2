@@ -238,15 +238,14 @@
         const visitsCountEl = document.getElementById("visits-count");
 
         try {
-          // 1. Call /api/visit to increment the counter
-          const visitResponse = await fetch("/api/visit");
+          // Add a unique timestamp (?t=...) so the browser never caches the API response
+          const visitResponse = await fetch("/api/visit?t=" + Date.now());
           if (visitResponse.ok) {
             const visitData = await visitResponse.json();
             visitsCountEl.textContent = visitData.visits ?? "0";
           }
 
-          // 2. Call /api/status for database status and time
-          const statusResponse = await fetch("/api/status");
+          const statusResponse = await fetch("/api/status?t=" + Date.now());
           if (statusResponse.ok) {
             const statusData = await statusResponse.json();
             dbStatusEl.textContent = statusData.database ?? "connected";
