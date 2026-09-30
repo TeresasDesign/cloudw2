@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assignment 5 public api</title>
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+      .status-box {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+      }
+      .status-box p {
+        margin: 6px 0;
+      }
+      .screenshots img {
+        display: block;
+        width: 100%;
+        max-width: 1200px;
+        height: auto;
+        margin: 25px auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="deployment-documentation">
+        <h1>Rahti (OpenShift) Deployment Report</h1>
+
+        <!-- LIVE APPLICATION STATUS -->
+        <section class="status-box">
+          <h2>Live Application Status</h2>
+          <p>
+            <strong>Database:</strong> <span id="db-status">Loading...</span>
+          </p>
+          <p>
+            <strong>Visits:</strong> <span id="visits-count">Loading...</span>
+          </p>
+          <p>
+            <strong>Database time:</strong> <span id="db-time">Loading...</span>
+          </p>
+        </section>
+
+        <!-- PUBLIC API WIDGET -->
+        <section class="status-box">
+          <h2>Live Weather API Integration</h2>
+          <p>
+            <strong>Location:</strong> Oulu, Finland
+          </p>
+          <p>
+            <strong>Current Temperature:</strong> <span id="weather-temp">Loading...</span>
+          </p>
+          <p>
+            <strong>Conditions:</strong> <span id="weather-condition">Loading...</span>
+          </p>
+        </section>
+        <section>
+          <h2>1. What is YAML and why has it become the default configuration format for Kubernetes/Rahti manifests? Compare it briefly to JSON</h2>
+          <p>
+            YAML ("YAML Ain't Markup Language") has become the default configuration format for Kubernetes and Rahti because it is designed to be highly human-readable and relies on clean indentation rather than heavy punctuation. Unlike JSON, which requires numerous curly braces, square brackets, and quotation marks that quickly clutter multi-layered files, YAML allows engineers to clearly structure and read complex deployment specifications, metadata, and container configurations without visual fatigue.</p>
+            <h2>2. List some public APIs and describe a realistic integration you could add to the backend you built in Week 4</h2>
+          <p>A public API is an open web service that allows applications to fetch free data from external sources over the internet, such as Open-Meteo for weather forecasts, CoinGecko for cryptocurrency prices, or Restcountries for geographic data. A realistic integration for this project involves fetching live weather updates from the Open-Meteo API using a lightweight fetch function whenever the user loads the application page, allowing the frontend to dynamically display current environmental conditions directly on the report interface.</p>
+          <h2>3. What is a Web Application Firewall (WAF) and what kinds of attacks does it defend against? Where would you place it in the three-container architecture you built in Week 4 (Route → frontend → backend → db)?</h2>
+          <p>A Web Application Firewall (WAF) is a specialized security layer that inspects actual HTTP web traffic rather than just blocking network ports, protecting web applications from malicious application-layer attacks like SQL injection and Cross-Site Scripting (XSS). In our three-container architecture (Route → frontend → backend → db), a WAF should be placed at the very beginning—right before the OpenShift Route and frontend container—so it can filter and intercept malicious requests before they ever reach the backend API or database.</p>
+          <h2>4. What are open data portals (for example avoindata.fi or the European Data Portal) and why does choosing the right data format matter for reuse?</h2>
+          <p>Open data portals are centralized online repositories where governments, cities, and organizations publish free, publicly accessible datasets (such as public transit timetables, environmental records, or statistical information) for public use. Choosing the correct data format is crucial because structured, machine-readable formats like JSON or CSV allow developers and researchers to easily write automated scripts to parse, filter, and analyze the data, whereas static formats like scanned PDF documents make programmatic reuse difficult.</p>
+        </section>
+        <section>
+          <h2>Documentation</h2>
+          <p>Out of the three options we had for this assignment, I chose to integrate the Open-Meteo API for live weather data fetching.</p>
+          <img src="https://a3s.fi/swift/v1/cloudservicesassigment/api.png">
+        </section>
+    <script>
+      async function fetchStatus() {
+        const dbStatusEl = document.getElementById("db-status");
+        const dbTimeEl = document.getElementById("db-time");
+        const visitsCountEl = document.getElementById("visits-count");
+
+        try {
+          // Add a unique timestamp (?t=...) so the browser never caches the API response
+          const visitResponse = await fetch("/api/visit?t=" + Date.now());
+          if (visitResponse.ok) {
+            const visitData = await visitResponse.json();
+            visitsCountEl.textContent = visitData.visits ?? "0";
+          }
+
+          const statusResponse = await fetch("/api/status?t=" + Date.now());
+          if (statusResponse.ok) {
+            const statusData = await statusResponse.json();
+            dbStatusEl.textContent = statusData.database ?? "connected";
+            dbTimeEl.textContent = statusData.database_time ?? "--";
+          }
+        } catch (error) {
+          console.error("Error fetching application status:", error);
+          dbStatusEl.textContent = "Disconnected";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchStatus);
+
+      async function fetchWeather() {
+        const tempEl = document.getElementById("weather-temp");
+        const conditionEl = document.getElementById("weather-condition");
+
+        try {
+          const response = await fetch("https://api.open-meteo.com/v1/forecast?latitude=65.0124&longitude=25.4682&current_weather=true");
+          
+          if (response.ok) {
+            const data = await response.json();
+            const weather = data.current_weather;
+            
+            tempEl.textContent = `${weather.temperature} °C`;
+            conditionEl.textContent = `Wind speed: ${weather.windspeed} km/h`;
+          } else {
+            tempEl.textContent = "Unavailable";
+            conditionEl.textContent = "Unavailable";
+          }
+        } catch (error) {
+          console.error("Error fetching weather:", error);
+          tempEl.textContent = "Error";
+          conditionEl.textContent = "Error";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchStatus();
+        fetchWeather();
+      });
+    </script>
+  </body>
+</html>
