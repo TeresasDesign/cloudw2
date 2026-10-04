@@ -31,8 +31,12 @@ jobs:
           tags: ghcr.io/teresasdesign/backend:latest
 
       - name: Log in to OpenShift (Rahti)
-        run: |
-          oc login --server="${{ secrets.OPENSHIFT_SERVER }}" --token="${{ secrets.OPENSHIFT_TOKEN }}" --insecure-skip-tls-verify=true
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
+          insecure_skip_tls_verify: true
 
       - name: Update deployment image on Rahti
         run: |
