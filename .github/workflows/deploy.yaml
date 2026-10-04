@@ -7,12 +7,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Log in to GitHub Container Registry
@@ -22,23 +18,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push container image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./backend/Dockerfile # Adjust this path if your Dockerfile is elsewhere
+          file: ./Dockerfile
           push: true
           tags: ghcr.io/teresasdesign/backend:latest
 
       - name: Log in to OpenShift (Rahti)
-        uses: redhat-actions/oc-login@v1
-        with:
-          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-          namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
-          insecure_skip_tls_verify: true
-
-      - name: Update Rahti Deployment Image
         run: |
-          oc set image deployment/backend backend=ghcr.io/teresasdesign/backend:latest
-          oc rollout status deployment/backend
+          oc login --server="${{ secrets.OPENSHIFT_SERVER }}" --token="${{ secrets.OPENSHIFT_TOKEN }}" --insecure-skip-tls-verify=true
+
+      - name: Update deployment image on Rahti
+        run: |
+          oc set image deployment/backend backend=ghcr.io/teresasdesign/backend:latest -n ${{ secrets.OPENSHIFT_NAMESPACE }}
