@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assignment 5 public api</title>
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+      .status-box {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+      }
+      .status-box p {
+        margin: 6px 0;
+      }
+      .screenshots img {
+        display: block;
+        width: 100%;
+        max-width: 1200px;
+        height: auto;
+        margin: 25px auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="deployment-documentation">
+        <h1>Rahti (OpenShift) Deployment Report</h1>
+
+        <!-- LIVE APPLICATION STATUS -->
+        <section class="status-box">
+          <h2>Live Application Status</h2>
+          <p>
+            <strong>Database:</strong> <span id="db-status">Loading...</span>
+          </p>
+          <p>
+            <strong>Visits:</strong> <span id="visits-count">Loading...</span>
+          </p>
+          <p>
+            <strong>Database time:</strong> <span id="db-time">Loading...</span>
+          </p>
+        </section>
+
+        <!-- PUBLIC API WIDGET -->
+        <section class="status-box">
+          <h2>Live Weather API Integration</h2>
+          <p>
+            <strong>Location:</strong> Oulu, Finland
+          </p>
+          <p>
+            <strong>Current Temperature:</strong> <span id="weather-temp">Loading...</span>
+          </p>
+          <p>
+            <strong>Conditions:</strong> <span id="weather-condition">Loading...</span>
+          </p>
+        </section>
+        <section>
+          <h2>1. Explain the difference between Continuous Integration, Continuous Delivery, and Continuous Deployment.</h2>
+          <p>
+            Continuous Integration (CI) is all about developers frequently merging their code changes into a shared repository, where automated builds and checks run right away to catch bugs early. Continuous Delivery takes it a step further by ensuring the code is always fully built, tested, and ready to go, though a human still manually clicks a button to approve the final release to production. Continuous Deployment fully automates that final step—every single code change that passes the automated pipeline goes straight to production with zero human intervention. For example, in our project, CI tests our builds on every push, while an automated deployment pipeline pushes updates straight to our Rahti environment without needing manual terminal commands.</p>
+            <h2>2. Describe the structure of a GitHub Actions workflow (triggers, jobs, steps). What would a minimal pipeline for the app you built in Week 4/5 need to do?</h2>
+          <p>A GitHub Actions workflow is structured hierarchically using three main parts: triggers (on), which define when the workflow runs (like on every push to the main branch); jobs, which group execution steps together; and steps, which are the individual commands run sequentially on a virtual runner. For our web app, a minimal pipeline needs to check out the repository code, log into the GitHub Container Registry (GHCR) to build and push the container image, securely authenticate with OpenShift using tokens, and run oc set image to update the running deployment on Rahti.</p>
+          <h2>3. Explain the difference between a liveness probe and a readiness probe in Kubernetes/Rahti. What happens when each one fails?</h2>
+          <p>Both are automated health checks used by Kubernetes, but they have completely different jobs. A liveness probe checks if the application container is still healthy and running properly; if it fails repeatedly, Kubernetes assumes the app is deadlocked or crashed, kills it, and automatically restarts the pod. A readiness probe checks if the app is fully initialized and actually ready to handle user traffic (like making sure it has successfully connected to the database). If a readiness probe fails, Kubernetes doesn't restart the pod, but instead temporarily pulls it out of the service load balancer so users aren't sent to an unready instance.</p>
+          <h2>4. Why should secrets (registry tokens, cluster login tokens) never be hard-coded into a CI/CD pipeline file? How does GitHub Actions handle this instead?</h2>
+          <p>Hard-coding sensitive credentials like cluster tokens or registry passwords directly into pipeline files is a major security risk because anyone who can view your repository can steal them and access your cloud infrastructure. Instead, GitHub Actions provides an encrypted vault called Repository Secrets. The workflow file references these secrets securely at runtime (using expressions like ${{ secrets.OPENSHIFT_TOKEN }}), passing them to the environment dynamically without ever exposing them in the plain-text source code or git history.</p>
+        </section>
+        <section>
+          <h2>Documentation</h2>
+        
+          <img src="https://a3s.fi/swift/v1/cloudservicesassigment/api.png">
+        </section>
+    <script>
+      async function fetchStatus() {
+        const dbStatusEl = document.getElementById("db-status");
+        const dbTimeEl = document.getElementById("db-time");
+        const visitsCountEl = document.getElementById("visits-count");
+
+        try {
+          // Add a unique timestamp (?t=...) so the browser never caches the API response
+          const visitResponse = await fetch("/api/visit?t=" + Date.now());
+          if (visitResponse.ok) {
+            const visitData = await visitResponse.json();
+            visitsCountEl.textContent = visitData.visits ?? "0";
+          }
+
+          const statusResponse = await fetch("/api/status?t=" + Date.now());
+          if (statusResponse.ok) {
+            const statusData = await statusResponse.json();
+            dbStatusEl.textContent = statusData.database ?? "connected";
+            dbTimeEl.textContent = statusData.database_time ?? "--";
+          }
+        } catch (error) {
+          console.error("Error fetching application status:", error);
+          dbStatusEl.textContent = "Disconnected";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchStatus);
+
+      async function fetchWeather() {
+        const tempEl = document.getElementById("weather-temp");
+        const conditionEl = document.getElementById("weather-condition");
+
+        try {
+          const response = await fetch("https://api.open-meteo.com/v1/forecast?latitude=65.0124&longitude=25.4682&current_weather=true");
+          
+          if (response.ok) {
+            const data = await response.json();
+            const weather = data.current_weather;
+            
+            tempEl.textContent = `${weather.temperature} °C`;
+            conditionEl.textContent = `Wind speed: ${weather.windspeed} km/h`;
+          } else {
+            tempEl.textContent = "Unavailable";
+            conditionEl.textContent = "Unavailable";
+          }
+        } catch (error) {
+          console.error("Error fetching weather:", error);
+          tempEl.textContent = "Error";
+          conditionEl.textContent = "Error";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchStatus();
+        fetchWeather();
+      });
+    </script>
+  </body>
+</html>
