@@ -16,7 +16,7 @@ spec:
         - name: backend
           image: vikke82/lemp-backend:1.0.2
           ports:
-            - containerPort: 8000
+            - containerPort: 8080
           env:
             - name: DB_HOST
               valueFrom:
