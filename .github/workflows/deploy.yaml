@@ -30,6 +30,11 @@ jobs:
           push: true
           tags: ghcr.io/teresasdesign/backend:latest
 
+      - name: Install OpenShift CLI (oc)
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "latest"
+
       - name: Log in to OpenShift (Rahti)
         uses: redhat-actions/oc-login@v1
         with:
