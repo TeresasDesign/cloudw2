@@ -43,6 +43,9 @@ jobs:
           namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
           insecure_skip_tls_verify: true
 
-      - name: Update deployment image on Rahti
+      - name: Update deployments on Rahti
         run: |
           oc set image deployment/backend backend=ghcr.io/teresasdesign/backend:latest -n ${{ secrets.OPENSHIFT_NAMESPACE }}
+          oc set image deployment/frontend frontend=ghcr.io/teresasdesign/backend:latest -n ${{ secrets.OPENSHIFT_NAMESPACE }}
+          oc rollout restart deployment/backend -n ${{ secrets.OPENSHIFT_NAMESPACE }}
+          oc rollout restart deployment/frontend -n ${{ secrets.OPENSHIFT_NAMESPACE }}
