@@ -28,7 +28,7 @@ jobs:
           context: .
           file: ./backend/Dockerfile # Adjust this path if your Dockerfile is elsewhere
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/backend:latest
+          tags: ghcr.io/teresasdesign/backend:latest
 
       - name: Log in to OpenShift (Rahti)
         uses: redhat-actions/oc-login@v1
@@ -40,5 +40,5 @@ jobs:
 
       - name: Update Rahti Deployment Image
         run: |
-          oc set image deployment/backend backend=ghcr.io/${{ github.repository_owner }}/backend:latest
+          oc set image deployment/backend backend=ghcr.io/teresasdesign/backend:latest
           oc rollout status deployment/backend
