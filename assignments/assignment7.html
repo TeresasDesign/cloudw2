@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="../style.css" />
+
+    <title>Assignment 7</title>
+  </head>
+
+  <body>
+    <main>
+      <h1>Assignment 7</h1>
+      <h2>Part A</h2>
+      <section>
+        <h2>
+          What is Infrastructure as Code, and which problems of manually created
+          infrastructure does it solve? Use your own Week 1 VM setup as an
+          example.
+        </h2>
+
+        <p>
+          Infrastructure as Code (IaC) is the practice of managing and
+          provisioning computing infrastructure using human-readable
+          configuration files rather than manual clicking through web dashboards
+          or configuring physical hardware. IaC solves major problems of manual
+          infrastructure, such as human error, lack of documentation, and the
+          inability to easily reproduce environments. For example, in Week 1,
+          setting up your virtual machine on cPouta required manually logging
+          into the web dashboard, selecting an image and flavor, clicking
+          through network and security group settings, manually attaching a
+          floating IP, and configuring Nginx over SSH. If you needed to recreate
+          that exact setup later, you had to remember every single manual click.
+          With OpenTofu, that entire process is defined in code files like
+          main.tf and deployed automatically in minutes with zero guesswork.
+        </p>
+      </section>
+
+      <section>
+        <h2>
+          What is the state file used for? Why should it not be committed to a
+          Git repository, and how do teams usually share it instead?
+        </h2>
+
+        <p>
+          The state file (terraform.tfstate) is OpenTofu's internal database and
+          "single source of truth." It maps your real-world cloud resources in
+          cPouta to the resource blocks declared in your configuration files,
+          tracking IDs, metadata, and dependencies. It should not be committed
+          to a Git repository because it often contains sensitive data,
+          credentials, or secrets in plain text. Furthermore, committing state
+          files in Git leads to severe merge conflicts and race conditions when
+          multiple team members apply infrastructure changes simultaneously.
+          Instead, teams share state files using remote backends (such as AWS
+          S3, Terraform Cloud, or Object Storage) that support state locking,
+          ensuring only one person can modify the infrastructure at a time.
+        </p>
+      </section>
+
+      <section>
+        <h2>
+          What is configuration drift, how does it happen, and how does an IaC
+          tool detect it?
+        </h2>
+
+        <p>
+          Configuration drift occurs when the real-world state of your cloud
+          infrastructure diverges from the desired configuration defined in your
+          code. This usually happens when an administrator makes manual
+          "hotfixes" or edits directly through a cloud provider's web console or
+          CLI—such as manually deleting a firewall rule in the cPouta dashboard,
+          which we tested in Experiment 2. An IaC tool detects drift during the
+          tofu plan phase. OpenTofu queries the cloud provider's API to inspect
+          the actual live resources, compares them against the recorded state
+          file and configuration, and flags any unexpected differences (such as
+          missing or modified security rules).
+        </p>
+      </section>
+
+      <!-- Question 4 -->
+      <section>
+        <h2>
+          Some changes in a tofu plan are made in place, while others require
+          the resource to be destroyed and re-created. Why does this matter, and
+          what kinds of changes would you be especially careful with?
+        </h2>
+
+        <p>
+          This distinction matters because destroying and re-creating a resource
+          can cause downtime, service interruption, or permanent data loss. For
+          instance, modifying a VM's user_data script or changing an immutable
+          cloud property forces OpenTofu to destroy the old instance and spin up
+          a new one, which can result in a new public IP address or lost local
+          files. You should be especially careful with changes that trigger
+          recreation on stateful resources, such as production databases,
+          persistent storage volumes, or core networking gateways. In a
+          production environment, wiping a database or dropping a primary
+          storage volume to update a configuration parameter would cause
+          catastrophic data loss unless proper backups, replicas, or decoupling
+          strategies (like separating app servers from storage volumes) are in
+          place.
+        </p>
+      </section>
+      <section>
+        <h2>Documentation</h2>
+        <p></p>
+
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/iplan.png" />
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/iapply.png" />
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/iweb.png" />
+      </section>
+      <section>
+        <h2>Experiment 1</h2>
+        <h3>Option A</h3>
+        <p>
+          Predictions: I think the VM will be destroyed and recreated, and the
+          IP address will stay the same. Will the VM be updated in place or
+          recreated? What attribute caused it? It updated in-place (indicated by
+          the ~ symbol). The user_data attribute caused this because it holds
+          the cloud-init configuration script. Why can't cloud-init changes
+          apply instantly on a running VM? Cloud-init only runs on the first
+          boot. Running operating systems do not re-read or re-execute bootstrap
+          scripts automatically. Why did the IP address stay the same? The
+          floating IP is attached to the network port
+          (openstack_networking_port_v2.web), not directly to the VM instance.
+          Since the port wasn't modified, the IP mapping remained intact.
+        </p>
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/e1Aplan.png" />
+        <img
+          src="https://a3s.fi/swift/v1/cloudservicesassigment/e1Aapply.png"
+        />
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/e1aweb.png" />
+        <h3>Option B</h3>
+        <p>
+          Predictions: Resources: 1 resource added
+          (openstack_networking_secgroup_rule_v2.https), 0 changed, 0 destroyed.
+          VM affected: No, the VM will not be affected or restarted. How does
+          the result differ from Option A? Option A modified an existing
+          attribute (user_data), whereas Option B added a brand-new resource
+          block to the infrastructure. Is the VM affected? No. Security group
+          rules are separate network policies, so modifying them does not touch
+          or restart the compute instance. Does the page work over HTTPS now?
+          No. While port 443 is open in the firewall, Nginx is only configured
+          to listen on HTTP (port 80) and lacks an SSL certificate.
+        </p>
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/e1B.png" />
+        <img
+          src="https://a3s.fi/swift/v1/cloudservicesassigment/e1Bapply.png"
+        />
+      </section>
+      <section>
+        <h2>Experiment 2</h2>
+
+        <p>
+          Predictions: Part 1 (Deleting HTTP rule): OpenTofu will notice the
+          missing rule during tofu plan and propose recreating it. Part 2
+          (Adding manual rule): OpenTofu will ignore the extra manual rule
+          because it only tracks resources defined in code and state. Why did
+          OpenTofu react differently to deleted vs. added rules? OpenTofu relies
+          on its state file. When an OpenTofu-managed rule was deleted
+          externally, it detected drift against the state. Manual additions
+          outside OpenTofu's state are ignored because it only manages
+          explicitly declared configuration. What does this teach about manual
+          changes in IaC? Manual changes break the "single source of truth" and
+          cause state drift. Future applies can silently overwrite or break
+          these unmanaged changes.
+        </p>
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/e2p1p.png" />
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/e2p1.png" />
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/e2p2.png" />
+      </section>
+      <section>
+        <h2>Experiment 3</h2>
+
+        <p>
+          Predictions: Count & Order: tofu destroy will remove all resources in
+          reverse dependency order (VM and floating IP first, security group and
+          key pair last). Project network: It won't touch the project network
+          because it's referenced as a data block. Floating IP: The new floating
+          IP will likely be different after rebuilding since cPouta pulls a
+          fresh address from the pool. Compare actual destroy order with
+          prediction: Resources were destroyed in reverse dependency order,
+          automatically determined by OpenTofu's dependency graph in main.tf.
+          Why did the project network survive? It is defined as a data block,
+          meaning OpenTofu only reads an existing external resource and has no
+          authority to delete it. Why does a changing IP matter less with
+          outputs, and what is needed for a static IP? Outputs automatically
+          print the active URL after every apply. If an IP must remain static
+          (for DNS or whitelists), you would need to pre-allocate a reserved
+          floating IP and bind its fixed ID. How long did the rebuild take
+          compared to Week 1 manual setup? Rebuilding took only 2–3 minutes via
+          tofu apply, whereas manual setup in Week 1 took much longer through
+          the UI and was prone to human error.
+        </p>
+        <img
+          src="https://a3s.fi/swift/v1/cloudservicesassigment/e3destroy.png"
+        />
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/e3apply.png" />
+        <img src="https://a3s.fi/swift/v1/cloudservicesassigment/e3web.png" />
+      </section>
+    </main>
+  </body>
+</html>
